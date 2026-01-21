@@ -10,3 +10,13 @@ export const CreateSimulation = async (form: CreditFormData): Promise<Simulation
     const res = await api.post<SimulationResponse>('/simulate', data)
     return res.data
 }
+
+export const getExcel = async(simulationId: number) => {
+    const res = await api.get(
+        `/simulate/${simulationId}/excel`,
+        {
+            responseType: "blob",
+        }
+    )
+    return res.data
+}

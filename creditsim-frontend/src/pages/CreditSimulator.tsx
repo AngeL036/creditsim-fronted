@@ -21,7 +21,7 @@ export default function CreditSimulator() {
         return localStorage.getItem(STORAGE_RESULTS_KEY) !== null
     })
     const [loading, setLoading] = useState<boolean>(false)
-
+    const [simulationId, setSimulationId] = useState<number | null>(null)
     // Guardar cambios del formulario
     useEffect(() => {
         localStorage.setItem(STORAGE_FORM_KEY,JSON.stringify(form))
@@ -54,6 +54,7 @@ export default function CreditSimulator() {
         try{
             const data:SimulationResponse = await  CreateSimulation(form)
             setResults(data.tabla)
+            setSimulationId(data.simulation_id)
             setShowTable(true)
         } catch(error) {
             if(axios.isAxiosError(error)) {
@@ -79,8 +80,10 @@ export default function CreditSimulator() {
         loading={loading}
       />
 
-      {showTable && results && (
-        <ResultsTable data={results} />
+      {showTable && results && simulationId !== null &&(
+        <ResultsTable
+         data={results}
+         simulationId={simulationId} />
       )}
     </div>
   )

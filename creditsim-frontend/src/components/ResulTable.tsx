@@ -1,16 +1,48 @@
 import type { AmortizationRow } from "../types/credit"
-
+import {getExcel} from "../api/simulate.api"
+import axios from "axios"
 interface ResultsTableProps {
   data: AmortizationRow[]
+  simulationId: number
 }
 
-export default function ResultsTable({ data }: ResultsTableProps) {
+export default function ResultsTable({ data, simulationId }: ResultsTableProps) {
+
+  const handleDowloadExcel = async () => {
+    try{
+        const blob = await getExcel(simulationId)
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement("a")
+
+    link.href = url
+    link.download = `simulacion_${simulationId}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+
+    link.remove()
+    window.URL.revokeObjectURL(url)
+    } catch(error) {
+      if(axios.isAxiosError(error)){
+        const msg = 
+        error.response?.data?.detail ||
+        "Error al generar el excel"
+        alert(msg)
+      }else{
+        alert("Error inesperado")
+      }
+      
+    }
+
+  }
   return (
     <div className="mt-8 bg-white rounded-xl shadow-md overflow-hidden">
       <div className="px-6 py-4 border-b">
         <h2 className="text-lg font-semibold text-gray-800">
           Tabla de Amortización
         </h2>
+        <button 
+        onClick={handleDowloadExcel}
+        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">Descargar Excel</button>
       </div>
 
       <div className="overflow-x-auto">
